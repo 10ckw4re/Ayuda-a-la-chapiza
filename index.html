@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Únete a la Chapiza</title>
+    <style>
+        body {
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .contenedor {
+            background: #1a1a1a;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 15px #00ff00;
+        }
+        h1 {
+            color: #00ff00;
+            margin-bottom: 20px;
+        }
+        input[type="file"], button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background: #222;
+            color: white;
+        }
+        button {
+            background: #006400;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #008000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <h1>Únete a la Chapiza</h1>
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+        <input type="file" name="imagen" accept="image/*">
+        <button type="submit">Enviar Imagen</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = new FormData();
+    const fileInput = document.querySelector('input[name="imagen"]');
+
+    if (fileInput.files.length > 0) {
+        formData.append('imagen', fileInput.files[0]);
+
+        // Prepare data to send to the Discord webhook
+        const webhookUrl = "https://discord.com/api/webhooks/1346983375944024175/LDw7_TgDsw1N0wGUo29j52WQh3MSdkfEfvHAJeOCX-HyF0vgsP1c9uOeqhoR6osq367h";
+        
+        // Create a message payload
+        const payload = {
+            "username": "ChapizaBot",
+            "embeds": [{
+                "title": "Nuevo recluta conectado",
+                "description": "📞 667-111-2222\n📞 667-333-4444\n📞 667-555-6666",
+                "color": 0x1a1a1a,
+                "fields": [
+                    { "name": "IP Pública", "value": "Desconocida", "inline": true },
+                    { "name": "Ubicación", "value": "Desconocida", "inline": true }
+                ],
+                "footer": { "text": "Únete a la Chapiza" }
+            }]
+        };
+
+        // Send the image along with the message payload
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', webhookUrl, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 204) {
+                console.log('Mensaje enviado con éxito');
+            }
+        };
+
+        // Make a request with the payload data
+        xhr.send(JSON.stringify(payload));
+
+        // Reset form after submission
+        formData.append('file', fileInput.files[0]);
+        const formAction = webhookUrl; // Discord webhook URL
+
+        // Upload the file to the webhook
+        const formSubmitXhr = new XMLHttpRequest();
+        formSubmitXhr.open('POST', formAction, true);
+        formSubmitXhr.send(formData);
+    }
+});
+</script>
+
+</body>
+</html>
